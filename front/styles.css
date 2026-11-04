@@ -1,0 +1,1202 @@
+/* ==========================================================================
+   VISUAL DESIGN SYSTEM: Linux Distro Architecture Specification
+   Editorial Academic Minimalist with Technical Documentation Precision
+   Strict Zero-Radius Rectilinear Framing (border-radius: 0px)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Design Tokens & CSS Custom Properties
+   -------------------------------------------------------------------------- */
+:root {
+  /* Strict Rectilinear Token */
+  --radius-none: 0px;
+  --radius-surface: 0px;
+  --radius-element: 0px;
+
+  /* Border Density */
+  --border-width-hairline: 1px;
+
+  /* Typography Stacks */
+  --font-serif: 'Newsreader', 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Monaco, Consolas, monospace;
+
+  /* Light Mode (Tactile Editorial Paper & Soft Hairline Borders) */
+  --bg-canvas: #FBF9F5;
+  --bg-surface: #FFFFFF;
+  --bg-surface-subtle: #F4F1EA;
+  --bg-surface-hover: #EFECE4;
+  --border-subtle: #EAE6DC;
+  --border-strong: #D5CFBF;
+
+  --text-primary: #16171A;
+  --text-secondary: #54575F;
+  --text-muted: #82858E;
+
+  --accent-primary: #B45309;
+  --accent-primary-hover: #92400E;
+  --accent-primary-subtle: rgba(180, 83, 9, 0.08);
+  --accent-secondary: #1E3A8A;
+  --accent-secondary-subtle: rgba(30, 58, 138, 0.08);
+
+  --status-success: #15803D;
+  --status-success-bg: rgba(21, 128, 61, 0.1);
+  --status-error: #B91C1C;
+  --status-error-bg: rgba(185, 28, 28, 0.1);
+  --status-info: #0369A1;
+  --status-info-bg: rgba(3, 105, 161, 0.1);
+
+  --badge-neutral-bg: #EFECE4;
+  --badge-neutral-text: #4B4E55;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+
+  /* Color scheme for native UI */
+  color-scheme: light dark;
+}
+
+[data-theme="dark"],
+.dark {
+  /* Dark Mode (Deep Obsidian Technical Slate) */
+  --bg-canvas: #0E1013;
+  --bg-surface: #15181E;
+  --bg-surface-subtle: #1D212A;
+  --bg-surface-hover: #252B36;
+  --border-subtle: #232731;
+  --border-strong: #363C4A;
+
+  --text-primary: #F3F4F6;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
+
+  --accent-primary: #F59E0B;
+  --accent-primary-hover: #FBBF24;
+  --accent-primary-subtle: rgba(245, 158, 11, 0.14);
+  --accent-secondary: #60A5FA;
+  --accent-secondary-subtle: rgba(96, 165, 250, 0.14);
+
+  --status-success: #22C55E;
+  --status-success-bg: rgba(34, 197, 94, 0.15);
+  --status-error: #EF4444;
+  --status-error-bg: rgba(239, 68, 68, 0.15);
+  --status-info: #38BDF8;
+  --status-info-bg: rgba(56, 189, 248, 0.15);
+
+  --badge-neutral-bg: #222631;
+  --badge-neutral-text: #CBD5E1;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-hover: 0 10px 28px -4px rgba(0, 0, 0, 0.45);
+}
+
+/* --------------------------------------------------------------------------
+   2. Base Reset & Typography
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-radius: 0 !important; /* Strict zero radius enforcement */
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Material Symbols Sharp Configuration */
+.material-symbols-sharp {
+  font-family: 'Material Symbols Sharp';
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.25rem;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  user-select: none;
+}
+
+/* Monospace font utility */
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+/* --------------------------------------------------------------------------
+   3. Top Navigation Bar (Editorial Sticky Chrome)
+   -------------------------------------------------------------------------- */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(251, 249, 245, 0.88);
+  border-bottom: var(--border-width-hairline) solid var(--border-subtle);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+[data-theme="dark"] .site-nav,
+.dark .site-nav {
+  background-color: rgba(14, 16, 19, 0.88);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand-icon {
+  color: var(--accent-primary);
+  font-size: 1.5rem;
+}
+
+.brand-title {
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.brand-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: none;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+  }
+}
+
+.nav-link {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+}
+
+.nav-link span.slash {
+  color: var(--accent-primary);
+  font-weight: 700;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* --------------------------------------------------------------------------
+   4. Buttons & Interactive Controls (Strictly Rectilinear)
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.15rem;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  border: var(--border-width-hairline) solid transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background-color: var(--text-primary);
+  color: var(--bg-canvas);
+  border-color: var(--text-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #FFFFFF;
+}
+
+.btn-accent {
+  background-color: var(--accent-primary);
+  color: #FFFFFF;
+  border-color: var(--accent-primary);
+}
+
+.btn-accent:hover {
+  background-color: var(--accent-primary-hover);
+  border-color: var(--accent-primary-hover);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.btn-outline:hover {
+  background-color: var(--bg-surface-hover);
+  border-color: var(--text-primary);
+}
+
+.btn-subtle {
+  background-color: var(--bg-surface-subtle);
+  color: var(--text-secondary);
+  border-color: var(--border-subtle);
+}
+
+.btn-subtle:hover {
+  background-color: var(--bg-surface-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.btn-danger {
+  background-color: transparent;
+  color: var(--status-error);
+  border-color: rgba(185, 28, 28, 0.4);
+}
+
+.btn-danger:hover {
+  background-color: var(--status-error);
+  color: #FFFFFF;
+  border-color: var(--status-error);
+}
+
+.btn-icon-only {
+  padding: 0.55rem;
+  font-size: 1.1rem;
+}
+
+.btn-sm {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+/* --------------------------------------------------------------------------
+   5. Hero Section & Archetype Layout
+   -------------------------------------------------------------------------- */
+.main-wrapper {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+  flex: 1;
+}
+
+.hero-section {
+  max-width: 52rem;
+  margin-bottom: 3.5rem;
+}
+
+.system-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background-color: var(--bg-surface-subtle);
+  border: var(--border-width-hairline) solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1.25rem;
+}
+
+.system-tag .dot {
+  color: var(--text-muted);
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+}
+
+.hero-lead {
+  font-size: 1.125rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  max-width: 46rem;
+  margin-bottom: 2rem;
+}
+
+/* Metric Ribbon Strip (Section 5.4) */
+.metric-ribbon {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-top: var(--border-width-hairline) solid var(--border-subtle);
+  border-bottom: var(--border-width-hairline) solid var(--border-subtle);
+  padding: 1.5rem 0;
+  margin: 2rem 0;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .metric-ribbon {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .metric-item:not(:first-child) {
+    border-left: var(--border-width-hairline) solid var(--border-subtle);
+    padding-left: 1.5rem;
+  }
+}
+
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.metric-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+
+.scroll-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-top: 0.5rem;
+  transition: color 0.15s ease;
+}
+
+.scroll-indicator:hover {
+  color: var(--accent-primary);
+}
+
+/* --------------------------------------------------------------------------
+   6. Editorial Section Pattern (/0x · Pattern)
+   -------------------------------------------------------------------------- */
+.editorial-section {
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+  border-top: var(--border-width-hairline) solid var(--border-subtle);
+}
+
+.section-header {
+  margin-bottom: 2rem;
+}
+
+.section-taxonomy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.section-taxonomy .index {
+  color: var(--accent-primary);
+  font-weight: 700;
+}
+
+.section-title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.section-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+  max-width: 46rem;
+  line-height: 1.55;
+}
+
+/* --------------------------------------------------------------------------
+   7. Form Controls & Search Components
+   -------------------------------------------------------------------------- */
+.search-box {
+  background-color: var(--bg-surface);
+  border: var(--border-width-hairline) solid var(--border-subtle);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 2rem;
+}
+
+.search-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .search-input-group {
+    flex-direction: row;
+  }
+}
+
+.input-with-icon {
+  position: relative;
+  flex: 1;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  background-color: var(--bg-surface-subtle);
+  border: var(--border-width-hairline) solid var(--border-subtle);
+  color: var(--text-primary);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.form-input-plain {
+  padding-left: 1rem;
+}
+
+.form-input:focus {
+  outline: none;
+  background-color: var(--bg-surface);
+  border-color: var(--accent-primary);
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+}
+
+/* Chip filter suggestions */
+.quick-chips-wrapper {
+  margin-top: 1.25rem;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.quick-chips-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-right: 0.25rem;
+}
+
+.chip-btn {
+  padding: 0.25rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background-color: var(--bg-surface-subtle);
+  border: var(--border-width-hairline) solid var(--border-subtle);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chip-btn:hover {
+  background-color: var(--bg-surface-hover);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+/* Form Groups for Registration & Editing */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .form-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-label .required {
+  color: var(--accent-primary);
+  font-weight: 700;
+}
+
+.form-helper {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.checkbox-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  margin-top: 0.25rem;
+  user-select: none;
+}
+
+.checkbox-control input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: var(--border-width-hairline) solid var(--border-strong);
+  background-color: var(--bg-surface-subtle);
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+  margin: 0;
+}
+
+.checkbox-control input[type="checkbox"]:checked {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.checkbox-control input[type="checkbox"]:checked::before {
+  content: "✔";
+  font-size: 0.75rem;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+/* --------------------------------------------------------------------------
+   8. Topic / Exploration Cards (Section 5.3)
+   -------------------------------------------------------------------------- */
+.distro-card {
+  background-color: var(--bg-surface);
+  border: var(--border-width-hairline) solid var(--border-subtle);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.distro-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-hover);
+}
+
+.distro-card.featured-result {
+  border-left: 3px solid var(--accent-primary);
+  background-color: var(--bg-surface);
+  padding: 2rem;
+}
+
+.card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.slug-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.55rem;
+  background-color: var(--accent-primary-subtle);
+  border: var(--border-width-hairline) solid rgba(180, 83, 9, 0.2);
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .slug-badge,
+.dark .slug-badge {
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.id-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background-color: var(--badge-neutral-bg);
+  padding: 0.2rem 0.5rem;
+  border: var(--border-width-hairline) solid var(--border-subtle);
+}
+
+.card-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.card-lead {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+}
+
+/* Technical Specification Matrix inside Card */
+.spec-matrix {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  background-color: var(--bg-surface-subtle);
+  border: var(--border-width-hairline) solid var(--border-subtle);
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.spec-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.spec-key {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.spec-val {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 0.15rem;
+  word-break: break-all;
+}
+
+.spec-val.is-independent {
+  color: var(--accent-primary);
+}
+
+.card-footer-row {
+  border-top: var(--border-width-hairline) solid var(--border-subtle);
+  padding-top: 1rem;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.card-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Card Catalog Grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Empty State / Notice Box */
+.notice-box {
+  background-color: var(--bg-surface);
+  border: var(--border-width-hairline) solid var(--border-subtle);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.notice-icon {
+  font-size: 2.5rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.notice-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.notice-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  max-width: 28rem;
+  line-height: 1.5;
+}
+
+.notice-error {
+  border-left: 3px solid var(--status-error);
+  background-color: var(--status-error-bg);
+}
+
+.notice-error .notice-icon {
+  color: var(--status-error);
+}
+
+/* --------------------------------------------------------------------------
+   9. Technical Endpoint Documentation Table (Section /04)
+   -------------------------------------------------------------------------- */
+.endpoint-matrix {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.endpoint-card {
+  background-color: var(--bg-surface);
+  border: var(--border-width-hairline) solid var(--border-subtle);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: border-color 0.15s ease;
+}
+
+.endpoint-card:hover {
+  border-color: var(--border-strong);
+}
+
+.endpoint-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.endpoint-route {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+.method-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  letter-spacing: 0.05em;
+}
+
+.method-get {
+  background-color: var(--accent-secondary-subtle);
+  color: var(--accent-secondary);
+  border: var(--border-width-hairline) solid rgba(30, 58, 138, 0.2);
+}
+
+.method-post {
+  background-color: var(--accent-primary-subtle);
+  color: var(--accent-primary);
+  border: var(--border-width-hairline) solid rgba(180, 83, 9, 0.2);
+}
+
+.method-put {
+  background-color: var(--status-success-bg);
+  color: var(--status-success);
+  border: var(--border-width-hairline) solid rgba(21, 128, 61, 0.2);
+}
+
+.method-delete {
+  background-color: var(--status-error-bg);
+  color: var(--status-error);
+  border: var(--border-width-hairline) solid rgba(185, 28, 28, 0.2);
+}
+
+.endpoint-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.endpoint-schema {
+  background-color: var(--bg-surface-subtle);
+  border: var(--border-width-hairline) solid var(--border-subtle);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  overflow-x: auto;
+}
+
+/* --------------------------------------------------------------------------
+   10. Native Modal Dialogs (Modern Web Guidance Compliant)
+   -------------------------------------------------------------------------- */
+dialog:modal {
+  border: var(--border-width-hairline) solid var(--border-strong);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  padding: 2rem;
+  max-width: 38rem;
+  width: calc(100% - 2rem);
+  box-shadow: var(--shadow-hover);
+  margin: auto;
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background-color: rgba(14, 16, 19, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: var(--border-width-hairline) solid var(--border-subtle);
+}
+
+.dialog-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+}
+
+.dialog-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-primary);
+  margin-top: 0.2rem;
+  text-transform: uppercase;
+}
+
+.dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: var(--border-width-hairline) solid var(--border-subtle);
+}
+
+/* --------------------------------------------------------------------------
+   11. Toast Notifications System
+   -------------------------------------------------------------------------- */
+.toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 26rem;
+  width: calc(100% - 3rem);
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  background-color: var(--bg-surface);
+  border: var(--border-width-hairline) solid var(--border-strong);
+  box-shadow: var(--shadow-hover);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  animation: toastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast.toast-hiding {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast-success {
+  border-left: 3px solid var(--status-success);
+}
+
+.toast-success .toast-icon {
+  color: var(--status-success);
+}
+
+.toast-error {
+  border-left: 3px solid var(--status-error);
+}
+
+.toast-error .toast-icon {
+  color: var(--status-error);
+}
+
+.toast-info {
+  border-left: 3px solid var(--status-info);
+}
+
+.toast-info .toast-icon {
+  color: var(--status-info);
+}
+
+.toast-content {
+  flex: 1;
+}
+
+.toast-title {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+}
+
+.toast-message {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  font-size: 1.1rem;
+}
+
+.toast-close:hover {
+  color: var(--text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   12. Footer Section
+   -------------------------------------------------------------------------- */
+.site-footer {
+  border-top: var(--border-width-hairline) solid var(--border-subtle);
+  background-color: var(--bg-surface);
+  padding: 2.5rem 1.5rem;
+  margin-top: auto;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .footer-container {
+    flex-direction: row;
+    text-align: left;
+  }
+}
+
+.footer-meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.footer-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background-color: var(--bg-surface-subtle);
+  border: var(--border-width-hairline) solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  display: inline-block;
+  background-color: var(--status-success);
+}
+
+.status-dot.offline {
+  background-color: var(--status-error);
+}
+
+/* --------------------------------------------------------------------------
+   13. Accessibility & Print
+   -------------------------------------------------------------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
