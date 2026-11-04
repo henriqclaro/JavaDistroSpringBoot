@@ -17,40 +17,46 @@
   --border-width-hairline: 1px;
 
   /* Typography Stacks */
-  --font-serif: 'Newsreader', 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
-  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Monaco, Consolas, monospace;
+  --font-serif:
+    "Newsreader", "Playfair Display", Georgia, Cambria, "Times New Roman", serif;
+  --font-sans:
+    "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --font-mono:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", Menlo, Monaco, Consolas,
+    monospace;
 
   /* Light Mode (Tactile Editorial Paper & Soft Hairline Borders) */
-  --bg-canvas: #FBF9F5;
-  --bg-surface: #FFFFFF;
-  --bg-surface-subtle: #F4F1EA;
-  --bg-surface-hover: #EFECE4;
-  --border-subtle: #EAE6DC;
-  --border-strong: #D5CFBF;
+  --bg-canvas: #fbf9f5;
+  --bg-surface: #ffffff;
+  --bg-surface-subtle: #f4f1ea;
+  --bg-surface-hover: #efece4;
+  --border-subtle: #eae6dc;
+  --border-strong: #d5cfbf;
 
-  --text-primary: #16171A;
-  --text-secondary: #54575F;
-  --text-muted: #82858E;
+  --text-primary: #16171a;
+  --text-secondary: #54575f;
+  --text-muted: #82858e;
 
-  --accent-primary: #B45309;
-  --accent-primary-hover: #92400E;
+  --accent-primary: #b45309;
+  --accent-primary-hover: #92400e;
   --accent-primary-subtle: rgba(180, 83, 9, 0.08);
-  --accent-secondary: #1E3A8A;
+  --accent-secondary: #1e3a8a;
   --accent-secondary-subtle: rgba(30, 58, 138, 0.08);
 
-  --status-success: #15803D;
+  --status-success: #15803d;
   --status-success-bg: rgba(21, 128, 61, 0.1);
-  --status-error: #B91C1C;
+  --status-error: #b91c1c;
   --status-error-bg: rgba(185, 28, 28, 0.1);
-  --status-info: #0369A1;
+  --status-info: #0369a1;
   --status-info-bg: rgba(3, 105, 161, 0.1);
 
-  --badge-neutral-bg: #EFECE4;
-  --badge-neutral-text: #4B4E55;
+  --badge-neutral-bg: #efece4;
+  --badge-neutral-text: #4b4e55;
 
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
-  --shadow-hover: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+  --shadow-hover:
+    0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
 
   /* Color scheme for native UI */
   color-scheme: light dark;
@@ -59,32 +65,32 @@
 [data-theme="dark"],
 .dark {
   /* Dark Mode (Deep Obsidian Technical Slate) */
-  --bg-canvas: #0E1013;
-  --bg-surface: #15181E;
-  --bg-surface-subtle: #1D212A;
-  --bg-surface-hover: #252B36;
+  --bg-canvas: #0e1013;
+  --bg-surface: #15181e;
+  --bg-surface-subtle: #1d212a;
+  --bg-surface-hover: #252b36;
   --border-subtle: #232731;
-  --border-strong: #363C4A;
+  --border-strong: #363c4a;
 
-  --text-primary: #F3F4F6;
-  --text-secondary: #9CA3AF;
-  --text-muted: #6B7280;
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
 
-  --accent-primary: #F59E0B;
-  --accent-primary-hover: #FBBF24;
+  --accent-primary: #f59e0b;
+  --accent-primary-hover: #fbbf24;
   --accent-primary-subtle: rgba(245, 158, 11, 0.14);
-  --accent-secondary: #60A5FA;
+  --accent-secondary: #60a5fa;
   --accent-secondary-subtle: rgba(96, 165, 250, 0.14);
 
-  --status-success: #22C55E;
+  --status-success: #22c55e;
   --status-success-bg: rgba(34, 197, 94, 0.15);
-  --status-error: #EF4444;
+  --status-error: #ef4444;
   --status-error-bg: rgba(239, 68, 68, 0.15);
-  --status-info: #38BDF8;
+  --status-info: #38bdf8;
   --status-info-bg: rgba(56, 189, 248, 0.15);
 
   --badge-neutral-bg: #222631;
-  --badge-neutral-text: #CBD5E1;
+  --badge-neutral-text: #cbd5e1;
 
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2);
   --shadow-hover: 0 10px 28px -4px rgba(0, 0, 0, 0.45);
@@ -115,7 +121,10 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -123,7 +132,7 @@ body {
 
 /* Material Symbols Sharp Configuration */
 .material-symbols-sharp {
-  font-family: 'Material Symbols Sharp';
+  font-family: "Material Symbols Sharp";
   font-weight: 400;
   font-style: normal;
   font-size: 1.25rem;
@@ -157,7 +166,9 @@ body {
   -webkit-backdrop-filter: blur(12px);
   background-color: rgba(251, 249, 245, 0.88);
   border-bottom: var(--border-width-hairline) solid var(--border-subtle);
-  transition: background-color 0.25s ease, border-color 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 [data-theme="dark"] .site-nav,
@@ -259,7 +270,11 @@ body {
   line-height: 1.2;
   cursor: pointer;
   border: var(--border-width-hairline) solid transparent;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -277,12 +292,12 @@ body {
 .btn-primary:hover {
   background-color: var(--accent-primary);
   border-color: var(--accent-primary);
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .btn-accent {
   background-color: var(--accent-primary);
-  color: #FFFFFF;
+  color: #ffffff;
   border-color: var(--accent-primary);
 }
 
@@ -322,7 +337,7 @@ body {
 
 .btn-danger:hover {
   background-color: var(--status-error);
-  color: #FFFFFF;
+  color: #ffffff;
   border-color: var(--status-error);
 }
 
@@ -542,7 +557,9 @@ body {
   background-color: var(--bg-surface-subtle);
   border: var(--border-width-hairline) solid var(--border-subtle);
   color: var(--text-primary);
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .form-input-plain {
@@ -669,7 +686,7 @@ body {
 .checkbox-control input[type="checkbox"]:checked::before {
   content: "✔";
   font-size: 0.75rem;
-  color: #FFFFFF;
+  color: #ffffff;
   line-height: 1;
 }
 
@@ -684,7 +701,10 @@ body {
   flex-direction: column;
   justify-content: space-between;
   box-shadow: var(--shadow-card);
-  transition: transform 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+  transition:
+    transform 0.2s ease-out,
+    border-color 0.2s ease-out,
+    box-shadow 0.2s ease-out;
 }
 
 .distro-card:hover {
@@ -1032,7 +1052,9 @@ dialog::backdrop {
   align-items: flex-start;
   gap: 0.75rem;
   animation: toastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .toast.toast-hiding {

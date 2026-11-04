@@ -6,28 +6,28 @@
  * All user-facing interface text in Portuguese.
  */
 
-'use strict';
+"use strict";
 
 /* ==========================================================================
    1. Configuration & Global State
    ========================================================================== */
 
 const CONFIG = {
-  DEFAULT_API_BASE: 'http://localhost:8080',
-  STORAGE_THEME_KEY: 'distro_theme_preference',
-  STORAGE_API_KEY: 'distro_api_base_url',
-  STORAGE_CACHE_KEY: 'distro_session_history_v1',
+  DEFAULT_API_BASE: "http://localhost:8080",
+  STORAGE_THEME_KEY: "distro_theme_preference",
+  STORAGE_API_KEY: "distro_api_base_url",
+  STORAGE_CACHE_KEY: "distro_session_history_v1",
   TOAST_DURATION_MS: 4000,
   POPULAR_SHORTCUTS: [
-    'Ubuntu',
-    'Debian',
-    'Fedora',
-    'Arch Linux',
-    'Alpine',
-    'openSUSE',
-    'Void Linux',
-    'Gentoo'
-  ]
+    "Ubuntu",
+    "Debian",
+    "Fedora",
+    "Arch Linux",
+    "Alpine",
+    "openSUSE",
+    "Void Linux",
+    "Gentoo",
+  ],
 };
 
 const state = {
@@ -35,7 +35,7 @@ const state = {
   theme: getInitialTheme(),
   activeDistro: null,
   cachedDistros: getStoredCache(),
-  pendingDeleteName: null
+  pendingDeleteName: null,
 };
 
 /* ==========================================================================
@@ -48,13 +48,13 @@ const state = {
  * @returns {string}
  */
 function escapeHtml(str) {
-  if (str == null) return '';
+  if (str == null) return "";
   return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 /* ==========================================================================
@@ -67,7 +67,7 @@ class DistroApiClient {
    * @returns {string}
    */
   static getBaseUrl() {
-    return state.apiBaseUrl.replace(/\/+$/, '');
+    return state.apiBaseUrl.replace(/\/+$/, "");
   }
 
   /**
@@ -79,19 +79,19 @@ class DistroApiClient {
   static async request(endpoint, options = {}) {
     const url = `${this.getBaseUrl()}${endpoint}`;
     const defaultHeaders = {
-      'Accept': 'application/json'
+      Accept: "application/json",
     };
 
-    if (options.body && typeof options.body === 'string') {
-      defaultHeaders['Content-Type'] = 'application/json';
+    if (options.body && typeof options.body === "string") {
+      defaultHeaders["Content-Type"] = "application/json";
     }
 
     const mergedOptions = {
       ...options,
       headers: {
         ...defaultHeaders,
-        ...(options.headers || {})
-      }
+        ...(options.headers || {}),
+      },
     };
 
     try {
@@ -111,14 +111,16 @@ class DistroApiClient {
       }
 
       // If response has no content (200 with empty body)
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
         return await response.json();
       }
       return null;
     } catch (error) {
-      if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        throw new Error('Não foi possível conectar à API. Verifique se o servidor backend está em execução na porta configurada e se o CORS está liberado.');
+      if (error.name === "TypeError" && error.message.includes("fetch")) {
+        throw new Error(
+          "Não foi possível conectar à API. Verifique se o servidor backend está em execução na porta configurada e se o CORS está liberado.",
+        );
       }
       throw error;
     }
@@ -132,11 +134,14 @@ class DistroApiClient {
   static async getByName(name) {
     const cleanName = name.trim();
     if (!cleanName) {
-      throw new Error('Informe o nome da distribuição para consulta.');
+      throw new Error("Informe o nome da distribuição para consulta.");
     }
-    const data = await this.request(`/distro?name=${encodeURIComponent(cleanName)}`, {
-      method: 'GET'
-    });
+    const data = await this.request(
+      `/distro?name=${encodeURIComponent(cleanName)}`,
+      {
+        method: "GET",
+      },
+    );
     return this.normalizeDistro(data);
   }
 
@@ -148,16 +153,16 @@ class DistroApiClient {
   static async create(distroData) {
     const payload = {
       name: distroData.name.trim(),
-      base: distroData.base.trim() || 'independent',
+      base: distroData.base.trim() || "independent",
       environment: distroData.environment.trim(),
       // Send both camelCase and snake_case for robust Jackson mapping
       packageManager: distroData.packageManager.trim(),
-      package_manager: distroData.packageManager.trim()
+      package_manager: distroData.packageManager.trim(),
     };
 
-    await this.request('/distro', {
-      method: 'POST',
-      body: JSON.stringify(payload)
+    await this.request("/distro", {
+      method: "POST",
+      body: JSON.stringify(payload),
     });
   }
 
@@ -171,14 +176,20 @@ class DistroApiClient {
     const payload = {
       name: distroData.name ? distroData.name.trim() : undefined,
       base: distroData.base ? distroData.base.trim() : undefined,
-      environment: distroData.environment ? distroData.environment.trim() : undefined,
-      packageManager: distroData.packageManager ? distroData.packageManager.trim() : undefined,
-      package_manager: distroData.packageManager ? distroData.packageManager.trim() : undefined
+      environment: distroData.environment
+        ? distroData.environment.trim()
+        : undefined,
+      packageManager: distroData.packageManager
+        ? distroData.packageManager.trim()
+        : undefined,
+      package_manager: distroData.packageManager
+        ? distroData.packageManager.trim()
+        : undefined,
     };
 
     await this.request(`/distro?id=${encodeURIComponent(id)}`, {
-      method: 'PUT',
-      body: JSON.stringify(payload)
+      method: "PUT",
+      body: JSON.stringify(payload),
     });
   }
 
@@ -190,10 +201,10 @@ class DistroApiClient {
   static async deleteByName(name) {
     const cleanName = name.trim();
     if (!cleanName) {
-      throw new Error('Nome da distribuição obrigatório para exclusão.');
+      throw new Error("Nome da distribuição obrigatório para exclusão.");
     }
     await this.request(`/distro?name=${encodeURIComponent(cleanName)}`, {
-      method: 'DELETE'
+      method: "DELETE",
     });
   }
 
@@ -206,10 +217,10 @@ class DistroApiClient {
     if (!raw) return null;
     return {
       id: raw.id,
-      name: raw.name || '',
-      base: raw.base || 'independent',
-      environment: raw.environment || '',
-      packageManager: raw.packageManager || raw.package_manager || ''
+      name: raw.name || "",
+      base: raw.base || "independent",
+      environment: raw.environment || "",
+      packageManager: raw.packageManager || raw.package_manager || "",
     };
   }
 }
@@ -220,42 +231,48 @@ class DistroApiClient {
 
 function getInitialTheme() {
   const stored = localStorage.getItem(CONFIG.STORAGE_THEME_KEY);
-  if (stored === 'dark' || stored === 'light') {
+  if (stored === "dark" || stored === "light") {
     return stored;
   }
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 }
 
 function applyTheme(theme) {
   state.theme = theme;
-  document.documentElement.setAttribute('data-theme', theme);
-  if (theme === 'dark') {
-    document.documentElement.classList.add('dark');
+  document.documentElement.setAttribute("data-theme", theme);
+  if (theme === "dark") {
+    document.documentElement.classList.add("dark");
   } else {
-    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.remove("dark");
   }
 
   const metaColorScheme = document.querySelector('meta[name="color-scheme"]');
   if (metaColorScheme) {
-    metaColorScheme.setAttribute('content', theme);
+    metaColorScheme.setAttribute("content", theme);
   }
 
   localStorage.setItem(CONFIG.STORAGE_THEME_KEY, theme);
 
-  const themeIcon = document.getElementById('theme-toggle-icon');
-  const themeLabel = document.getElementById('theme-toggle-label');
+  const themeIcon = document.getElementById("theme-toggle-icon");
+  const themeLabel = document.getElementById("theme-toggle-label");
   if (themeIcon) {
-    themeIcon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+    themeIcon.textContent = theme === "dark" ? "light_mode" : "dark_mode";
   }
   if (themeLabel) {
-    themeLabel.textContent = theme === 'dark' ? 'Modo Claro' : 'Modo Escuro';
+    themeLabel.textContent = theme === "dark" ? "Modo Claro" : "Modo Escuro";
   }
 }
 
 function toggleTheme() {
-  const nextTheme = state.theme === 'dark' ? 'light' : 'dark';
+  const nextTheme = state.theme === "dark" ? "light" : "dark";
   applyTheme(nextTheme);
-  showToast('info', 'Tema alterado', `Esquema de cores alterado para modo ${nextTheme === 'dark' ? 'escuro' : 'claro'}.`);
+  showToast(
+    "info",
+    "Tema alterado",
+    `Esquema de cores alterado para modo ${nextTheme === "dark" ? "escuro" : "claro"}.`,
+  );
 }
 
 /* ==========================================================================
@@ -266,14 +283,17 @@ function getStoredApiBase() {
   const stored = localStorage.getItem(CONFIG.STORAGE_API_KEY);
   if (stored) return stored.trim();
   // If hosted on the same origin and port 8080, use origin
-  if (window.location.protocol.startsWith('http') && window.location.port === '8080') {
+  if (
+    window.location.protocol.startsWith("http") &&
+    window.location.port === "8080"
+  ) {
     return window.location.origin;
   }
   return CONFIG.DEFAULT_API_BASE;
 }
 
 function setStoredApiBase(url) {
-  state.apiBaseUrl = url.trim().replace(/\/+$/, '');
+  state.apiBaseUrl = url.trim().replace(/\/+$/, "");
   localStorage.setItem(CONFIG.STORAGE_API_KEY, state.apiBaseUrl);
   updateApiStatusUi();
 }
@@ -301,7 +321,7 @@ function saveCache(list) {
 function upsertToCache(distro) {
   if (!distro || !distro.name) return;
   const filtered = state.cachedDistros.filter(
-    item => item.name.toLowerCase() !== distro.name.toLowerCase()
+    (item) => item.name.toLowerCase() !== distro.name.toLowerCase(),
   );
   // Add to top of list
   const updated = [distro, ...filtered].slice(0, 24);
@@ -311,14 +331,18 @@ function upsertToCache(distro) {
 function removeFromCache(distroName) {
   if (!distroName) return;
   const filtered = state.cachedDistros.filter(
-    item => item.name.toLowerCase() !== distroName.toLowerCase()
+    (item) => item.name.toLowerCase() !== distroName.toLowerCase(),
   );
   saveCache(filtered);
 }
 
 function clearSessionCache() {
   saveCache([]);
-  showToast('info', 'Histórico limpo', 'O histórico de distribuições da sessão foi redefinido.');
+  showToast(
+    "info",
+    "Histórico limpo",
+    "O histórico de distribuições da sessão foi redefinido.",
+  );
 }
 
 /* ==========================================================================
@@ -326,16 +350,16 @@ function clearSessionCache() {
    ========================================================================== */
 
 function showToast(type, title, message) {
-  const container = document.getElementById('toast-container');
+  const container = document.getElementById("toast-container");
   if (!container) return;
 
-  const toast = document.createElement('div');
+  const toast = document.createElement("div");
   toast.className = `toast toast-${type}`;
-  toast.setAttribute('role', 'alert');
+  toast.setAttribute("role", "alert");
 
-  let iconName = 'info';
-  if (type === 'success') iconName = 'check_circle';
-  if (type === 'error') iconName = 'error';
+  let iconName = "info";
+  if (type === "success") iconName = "check_circle";
+  if (type === "error") iconName = "error";
 
   toast.innerHTML = `
     <span class="material-symbols-sharp toast-icon" aria-hidden="true">${iconName}</span>
@@ -348,13 +372,13 @@ function showToast(type, title, message) {
     </button>
   `;
 
-  const closeBtn = toast.querySelector('.toast-close');
+  const closeBtn = toast.querySelector(".toast-close");
   const dismiss = () => {
-    toast.classList.add('toast-hiding');
+    toast.classList.add("toast-hiding");
     setTimeout(() => toast.remove(), 200);
   };
 
-  closeBtn.addEventListener('click', dismiss);
+  closeBtn.addEventListener("click", dismiss);
 
   container.appendChild(toast);
 
@@ -370,7 +394,7 @@ function showToast(type, title, message) {
    ========================================================================== */
 
 function renderSearchResult(distro) {
-  const container = document.getElementById('search-result-container');
+  const container = document.getElementById("search-result-container");
   if (!container) return;
 
   if (!distro) {
@@ -386,12 +410,14 @@ function renderSearchResult(distro) {
     return;
   }
 
-  const isIndependent = distro.base.toLowerCase() === 'independent' || distro.base.toLowerCase() === 'independente';
-  const baseLabel = isIndependent ? 'Independente (Sem Base)' : distro.base;
+  const isIndependent =
+    distro.base.toLowerCase() === "independent" ||
+    distro.base.toLowerCase() === "independente";
+  const baseLabel = isIndependent ? "Independente (Sem Base)" : distro.base;
 
   const narrativeText = isIndependent
-    ? `Distribuição Linux de arquitetura independente, equipada nativamente com o ambiente gráfico ${distro.environment || 'não especificado'} e gerenciador de pacotes ${distro.packageManager || 'não especificado'}.`
-    : `Distribuição Linux desenvolvida sobre a base ${distro.base}, adotando como padrão o ambiente gráfico ${distro.environment || 'não especificado'} e gerenciador de pacotes ${distro.packageManager || 'não especificado'}.`;
+    ? `Distribuição Linux de arquitetura independente, equipada nativamente com o ambiente gráfico ${distro.environment || "não especificado"} e gerenciador de pacotes ${distro.packageManager || "não especificado"}.`
+    : `Distribuição Linux desenvolvida sobre a base ${distro.base}, adotando como padrão o ambiente gráfico ${distro.environment || "não especificado"} e gerenciador de pacotes ${distro.packageManager || "não especificado"}.`;
 
   container.innerHTML = `
     <article class="distro-card featured-result" aria-labelledby="active-distro-title">
@@ -403,7 +429,7 @@ function renderSearchResult(distro) {
               /base:${escapeHtml(distro.base)}
             </span>
           </div>
-          <span class="id-badge font-mono">#ID ${distro.id != null ? distro.id : 'N/A'}</span>
+          <span class="id-badge font-mono">#ID ${distro.id != null ? distro.id : "N/A"}</span>
         </div>
 
         <h3 id="active-distro-title" class="card-title font-serif">
@@ -421,15 +447,15 @@ function renderSearchResult(distro) {
           </div>
           <div class="spec-cell">
             <span class="spec-key">Base do Sistema</span>
-            <span class="spec-val ${isIndependent ? 'is-independent' : ''}">${escapeHtml(baseLabel)}</span>
+            <span class="spec-val ${isIndependent ? "is-independent" : ""}">${escapeHtml(baseLabel)}</span>
           </div>
           <div class="spec-cell">
             <span class="spec-key">Ambiente Gráfico</span>
-            <span class="spec-val">${escapeHtml(distro.environment || 'Não informado')}</span>
+            <span class="spec-val">${escapeHtml(distro.environment || "Não informado")}</span>
           </div>
           <div class="spec-cell">
             <span class="spec-key">Gerenciador de Pacotes</span>
-            <span class="spec-val">${escapeHtml(distro.packageManager || 'Não informado')}</span>
+            <span class="spec-val">${escapeHtml(distro.packageManager || "Não informado")}</span>
           </div>
         </div>
       </div>
@@ -461,31 +487,33 @@ function renderSearchResult(distro) {
   `;
 
   // Attach dynamic handlers for the active card
-  document.getElementById('btn-edit-active')?.addEventListener('click', () => {
+  document.getElementById("btn-edit-active")?.addEventListener("click", () => {
     openEditDialog(distro);
   });
 
-  document.getElementById('btn-delete-active')?.addEventListener('click', () => {
-    openDeleteDialog(distro.name);
-  });
+  document
+    .getElementById("btn-delete-active")
+    ?.addEventListener("click", () => {
+      openDeleteDialog(distro.name);
+    });
 
-  const toggleJsonBtn = document.getElementById('btn-toggle-json');
-  const jsonContainer = document.getElementById('json-raw-container');
+  const toggleJsonBtn = document.getElementById("btn-toggle-json");
+  const jsonContainer = document.getElementById("json-raw-container");
   if (toggleJsonBtn && jsonContainer) {
-    toggleJsonBtn.addEventListener('click', () => {
-      const isHidden = jsonContainer.style.display === 'none';
-      jsonContainer.style.display = isHidden ? 'block' : 'none';
-      toggleJsonBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+    toggleJsonBtn.addEventListener("click", () => {
+      const isHidden = jsonContainer.style.display === "none";
+      jsonContainer.style.display = isHidden ? "block" : "none";
+      toggleJsonBtn.setAttribute("aria-expanded", isHidden ? "true" : "false");
       toggleJsonBtn.innerHTML = `
         <span class="material-symbols-sharp" aria-hidden="true">data_object</span>
-        <span>${isHidden ? 'Ocultar JSON' : 'Ver JSON Bruto'}</span>
+        <span>${isHidden ? "Ocultar JSON" : "Ver JSON Bruto"}</span>
       `;
     });
   }
 }
 
 function renderSearchLoading(name) {
-  const container = document.getElementById('search-result-container');
+  const container = document.getElementById("search-result-container");
   if (!container) return;
 
   container.innerHTML = `
@@ -500,7 +528,7 @@ function renderSearchLoading(name) {
 }
 
 function renderSearchError(name, errorMessage) {
-  const container = document.getElementById('search-result-container');
+  const container = document.getElementById("search-result-container");
   if (!container) return;
 
   container.innerHTML = `
@@ -526,32 +554,37 @@ function renderSearchError(name, errorMessage) {
     </div>
   `;
 
-  document.getElementById('btn-prefill-register')?.addEventListener('click', () => {
-    openRegisterDialog(name);
-  });
+  document
+    .getElementById("btn-prefill-register")
+    ?.addEventListener("click", () => {
+      openRegisterDialog(name);
+    });
 }
 
 function renderSessionGrid() {
-  const container = document.getElementById('session-cards-grid');
-  const emptyNotice = document.getElementById('session-empty-notice');
+  const container = document.getElementById("session-cards-grid");
+  const emptyNotice = document.getElementById("session-empty-notice");
   if (!container) return;
 
   if (!state.cachedDistros || state.cachedDistros.length === 0) {
-    if (emptyNotice) emptyNotice.style.display = 'block';
-    container.innerHTML = '';
+    if (emptyNotice) emptyNotice.style.display = "block";
+    container.innerHTML = "";
     return;
   }
 
-  if (emptyNotice) emptyNotice.style.display = 'none';
+  if (emptyNotice) emptyNotice.style.display = "none";
 
-  container.innerHTML = state.cachedDistros.map(distro => {
-    const isIndependent = distro.base.toLowerCase() === 'independent' || distro.base.toLowerCase() === 'independente';
-    return `
+  container.innerHTML = state.cachedDistros
+    .map((distro) => {
+      const isIndependent =
+        distro.base.toLowerCase() === "independent" ||
+        distro.base.toLowerCase() === "independente";
+      return `
       <article class="distro-card" data-distro-name="${escapeHtml(distro.name)}">
         <div>
           <div class="card-header-row">
             <span class="slug-badge">/base:${escapeHtml(distro.base)}</span>
-            <span class="id-badge font-mono">#ID ${distro.id != null ? distro.id : 'N/A'}</span>
+            <span class="id-badge font-mono">#ID ${distro.id != null ? distro.id : "N/A"}</span>
           </div>
 
           <h3 class="card-title font-serif" style="font-size: 1.25rem;">
@@ -559,7 +592,7 @@ function renderSessionGrid() {
           </h3>
 
           <p class="card-lead" style="font-size: 0.85rem; margin-bottom: 0.85rem;">
-            Ambiente: <strong>${escapeHtml(distro.environment || 'N/A')}</strong> · Gerenciador: <strong>${escapeHtml(distro.packageManager || 'N/A')}</strong>
+            Ambiente: <strong>${escapeHtml(distro.environment || "N/A")}</strong> · Gerenciador: <strong>${escapeHtml(distro.packageManager || "N/A")}</strong>
           </p>
         </div>
 
@@ -580,69 +613,74 @@ function renderSessionGrid() {
         </div>
       </article>
     `;
-  }).join('');
+    })
+    .join("");
 
   // Attach event delegation for session cards
-  container.querySelectorAll('.btn-inspect-card').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const name = btn.getAttribute('data-name');
-      const found = state.cachedDistros.find(d => d.name === name);
+  container.querySelectorAll(".btn-inspect-card").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const name = btn.getAttribute("data-name");
+      const found = state.cachedDistros.find((d) => d.name === name);
       if (found) {
         state.activeDistro = found;
         renderSearchResult(found);
-        document.getElementById('section-search')?.scrollIntoView({ behavior: 'smooth' });
+        document
+          .getElementById("section-search")
+          ?.scrollIntoView({ behavior: "smooth" });
       } else {
         performSearch(name);
       }
     });
   });
 
-  container.querySelectorAll('.btn-edit-card').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const name = btn.getAttribute('data-name');
-      const found = state.cachedDistros.find(d => d.name === name);
+  container.querySelectorAll(".btn-edit-card").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const name = btn.getAttribute("data-name");
+      const found = state.cachedDistros.find((d) => d.name === name);
       if (found) {
         openEditDialog(found);
       }
     });
   });
 
-  container.querySelectorAll('.btn-delete-card').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const name = btn.getAttribute('data-name');
+  container.querySelectorAll(".btn-delete-card").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const name = btn.getAttribute("data-name");
       openDeleteDialog(name);
     });
   });
 }
 
 function updateSessionCount() {
-  const counter = document.getElementById('metric-session-count');
+  const counter = document.getElementById("metric-session-count");
   if (counter) {
-    counter.textContent = String(state.cachedDistros.length).padStart(2, '0');
+    counter.textContent = String(state.cachedDistros.length).padStart(2, "0");
   }
 }
 
 function updateApiStatusUi() {
-  const pills = document.querySelectorAll('.api-url-display');
-  pills.forEach(p => {
+  const pills = document.querySelectorAll(".api-url-display");
+  pills.forEach((p) => {
     p.textContent = state.apiBaseUrl;
   });
 }
 
 function renderPopularShortcuts() {
-  const container = document.getElementById('popular-chips-container');
+  const container = document.getElementById("popular-chips-container");
   if (!container) return;
 
-  container.innerHTML = CONFIG.POPULAR_SHORTCUTS.map(name => `
+  container.innerHTML = CONFIG.POPULAR_SHORTCUTS.map(
+    (name) => `
     <button type="button" class="chip-btn" data-search-name="${escapeHtml(name)}">
       ${escapeHtml(name)}
     </button>
-  `).join('');
+  `,
+  ).join("");
 
-  container.querySelectorAll('.chip-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const name = btn.getAttribute('data-search-name');
-      const input = document.getElementById('search-input');
+  container.querySelectorAll(".chip-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const name = btn.getAttribute("data-search-name");
+      const input = document.getElementById("search-input");
       if (input) input.value = name;
       performSearch(name);
     });
@@ -658,9 +696,13 @@ function renderPopularShortcuts() {
  * @param {string} name
  */
 async function performSearch(name) {
-  const cleanName = (name || '').trim();
+  const cleanName = (name || "").trim();
   if (!cleanName) {
-    showToast('info', 'Campo vazio', 'Por favor, digite o nome de uma distribuição.');
+    showToast(
+      "info",
+      "Campo vazio",
+      "Por favor, digite o nome de uma distribuição.",
+    );
     return;
   }
 
@@ -671,7 +713,11 @@ async function performSearch(name) {
     state.activeDistro = distro;
     upsertToCache(distro);
     renderSearchResult(distro);
-    showToast('success', 'Distribuição localizada', `Ficha técnica de "${distro.name}" carregada com sucesso.`);
+    showToast(
+      "success",
+      "Distribuição localizada",
+      `Ficha técnica de "${distro.name}" carregada com sucesso.`,
+    );
   } catch (error) {
     state.activeDistro = null;
     renderSearchError(cleanName, error.message);
@@ -688,19 +734,25 @@ async function handleRegisterSubmit(e) {
   const submitBtn = form.querySelector('button[type="submit"]');
 
   const name = form.name.value.trim();
-  const isIndependent = form.querySelector('#reg-is-independent')?.checked;
-  const base = isIndependent ? 'independent' : form.base.value.trim() || 'independent';
+  const isIndependent = form.querySelector("#reg-is-independent")?.checked;
+  const base = isIndependent
+    ? "independent"
+    : form.base.value.trim() || "independent";
   const environment = form.environment.value.trim();
   const packageManager = form.packageManager.value.trim();
 
   if (!name) {
-    showToast('error', 'Nome obrigatório', 'O nome comercial da distribuição é obrigatório.');
+    showToast(
+      "error",
+      "Nome obrigatório",
+      "O nome comercial da distribuição é obrigatório.",
+    );
     return;
   }
 
   if (submitBtn) {
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Enviando...';
+    submitBtn.textContent = "Enviando...";
   }
 
   try {
@@ -708,13 +760,17 @@ async function handleRegisterSubmit(e) {
       name,
       base,
       environment,
-      packageManager
+      packageManager,
     });
 
-    showToast('success', 'Cadastro realizado', `Distribuição "${name}" cadastrada com sucesso no banco de dados!`);
+    showToast(
+      "success",
+      "Cadastro realizado",
+      `Distribuição "${name}" cadastrada com sucesso no banco de dados!`,
+    );
 
     // Close modal if open
-    const dialog = document.getElementById('register-dialog');
+    const dialog = document.getElementById("register-dialog");
     if (dialog && dialog.open) {
       dialog.close();
     }
@@ -724,7 +780,7 @@ async function handleRegisterSubmit(e) {
     // Query newly created distro to update view
     await performSearch(name);
   } catch (error) {
-    showToast('error', 'Erro no cadastro', error.message);
+    showToast("error", "Erro no cadastro", error.message);
   } finally {
     if (submitBtn) {
       submitBtn.disabled = false;
@@ -745,21 +801,29 @@ async function handleEditSubmit(e) {
   const form = e.target;
   const submitBtn = form.querySelector('button[type="submit"]');
 
-  const id = (form.id.value || form.querySelector('#edit-id-display')?.value || '').trim();
+  const id = (
+    form.id.value ||
+    form.querySelector("#edit-id-display")?.value ||
+    ""
+  ).trim();
   const name = form.name.value.trim();
-  const isIndependent = form.querySelector('#edit-is-independent')?.checked;
-  const base = isIndependent ? 'independent' : form.base.value.trim();
+  const isIndependent = form.querySelector("#edit-is-independent")?.checked;
+  const base = isIndependent ? "independent" : form.base.value.trim();
   const environment = form.environment.value.trim();
   const packageManager = form.packageManager.value.trim();
 
   if (!id) {
-    showToast('error', 'ID ausente', 'O identificador ID da distribuição é obrigatório para atualização.');
+    showToast(
+      "error",
+      "ID ausente",
+      "O identificador ID da distribuição é obrigatório para atualização.",
+    );
     return;
   }
 
   if (submitBtn) {
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Atualizando...';
+    submitBtn.textContent = "Atualizando...";
   }
 
   try {
@@ -767,12 +831,16 @@ async function handleEditSubmit(e) {
       name,
       base,
       environment,
-      packageManager
+      packageManager,
     });
 
-    showToast('success', 'Atualização concluída', `Distribuição "${name}" atualizada com sucesso no PostgreSQL!`);
+    showToast(
+      "success",
+      "Atualização concluída",
+      `Distribuição "${name}" atualizada com sucesso no PostgreSQL!`,
+    );
 
-    const dialog = document.getElementById('edit-dialog');
+    const dialog = document.getElementById("edit-dialog");
     if (dialog && dialog.open) {
       dialog.close();
     }
@@ -780,7 +848,7 @@ async function handleEditSubmit(e) {
     // Refresh active view
     await performSearch(name);
   } catch (error) {
-    showToast('error', 'Erro na atualização', error.message);
+    showToast("error", "Erro na atualização", error.message);
   } finally {
     if (submitBtn) {
       submitBtn.disabled = false;
@@ -799,21 +867,28 @@ async function handleConfirmDelete() {
   const name = state.pendingDeleteName;
   if (!name) return;
 
-  const dialog = document.getElementById('delete-dialog');
-  const confirmBtn = document.getElementById('btn-confirm-delete-action');
+  const dialog = document.getElementById("delete-dialog");
+  const confirmBtn = document.getElementById("btn-confirm-delete-action");
 
   if (confirmBtn) {
     confirmBtn.disabled = true;
-    confirmBtn.textContent = 'Excluindo...';
+    confirmBtn.textContent = "Excluindo...";
   }
 
   try {
     await DistroApiClient.deleteByName(name);
-    showToast('success', 'Distribuição removida', `A distribuição "${name}" foi excluída permanentemente.`);
+    showToast(
+      "success",
+      "Distribuição removida",
+      `A distribuição "${name}" foi excluída permanentemente.`,
+    );
 
     removeFromCache(name);
 
-    if (state.activeDistro && state.activeDistro.name.toLowerCase() === name.toLowerCase()) {
+    if (
+      state.activeDistro &&
+      state.activeDistro.name.toLowerCase() === name.toLowerCase()
+    ) {
       state.activeDistro = null;
       renderSearchResult(null);
     }
@@ -822,7 +897,7 @@ async function handleConfirmDelete() {
       dialog.close();
     }
   } catch (error) {
-    showToast('error', 'Erro na exclusão', error.message);
+    showToast("error", "Erro na exclusão", error.message);
   } finally {
     state.pendingDeleteName = null;
     if (confirmBtn) {
@@ -839,9 +914,9 @@ async function handleConfirmDelete() {
    8. Modal Helpers
    ========================================================================== */
 
-function openRegisterDialog(initialName = '') {
-  const dialog = document.getElementById('register-dialog');
-  const form = document.getElementById('register-modal-form');
+function openRegisterDialog(initialName = "") {
+  const dialog = document.getElementById("register-dialog");
+  const form = document.getElementById("register-modal-form");
   if (!dialog || !form) return;
 
   form.reset();
@@ -849,8 +924,8 @@ function openRegisterDialog(initialName = '') {
     form.name.value = initialName;
   }
 
-  const indCheckbox = form.querySelector('#reg-is-independent');
-  const baseInput = form.querySelector('#reg-base-input');
+  const indCheckbox = form.querySelector("#reg-is-independent");
+  const baseInput = form.querySelector("#reg-base-input");
   if (indCheckbox && baseInput) {
     indCheckbox.checked = false;
     baseInput.disabled = false;
@@ -861,44 +936,44 @@ function openRegisterDialog(initialName = '') {
 }
 
 function openEditDialog(distro = null) {
-  const dialog = document.getElementById('edit-dialog');
-  const form = document.getElementById('edit-modal-form');
+  const dialog = document.getElementById("edit-dialog");
+  const form = document.getElementById("edit-modal-form");
   if (!dialog || !form) return;
 
-  const idInput = form.querySelector('#edit-id-input');
-  const idDisplay = form.querySelector('#edit-id-display');
-  const indCheckbox = form.querySelector('#edit-is-independent');
-  const baseInput = form.querySelector('#edit-base-input');
+  const idInput = form.querySelector("#edit-id-input");
+  const idDisplay = form.querySelector("#edit-id-display");
+  const indCheckbox = form.querySelector("#edit-is-independent");
+  const baseInput = form.querySelector("#edit-base-input");
 
   form.reset();
 
   if (distro) {
-    if (idInput) idInput.value = distro.id != null ? distro.id : '';
+    if (idInput) idInput.value = distro.id != null ? distro.id : "";
     if (idDisplay) {
-      idDisplay.value = distro.id != null ? distro.id : '';
+      idDisplay.value = distro.id != null ? distro.id : "";
       idDisplay.readOnly = true;
-      idDisplay.style.cursor = 'not-allowed';
-      idDisplay.style.opacity = '0.7';
+      idDisplay.style.cursor = "not-allowed";
+      idDisplay.style.opacity = "0.7";
     }
-    form.name.value = distro.name || '';
-    form.base.value = distro.base || '';
-    form.environment.value = distro.environment || '';
-    form.packageManager.value = distro.packageManager || '';
+    form.name.value = distro.name || "";
+    form.base.value = distro.base || "";
+    form.environment.value = distro.environment || "";
+    form.packageManager.value = distro.packageManager || "";
 
-    const isIndependent = (distro.base || '').toLowerCase() === 'independent';
+    const isIndependent = (distro.base || "").toLowerCase() === "independent";
     if (indCheckbox && baseInput) {
       indCheckbox.checked = isIndependent;
       baseInput.disabled = isIndependent;
-      if (isIndependent) baseInput.value = 'independent';
+      if (isIndependent) baseInput.value = "independent";
     }
   } else {
-    if (idInput) idInput.value = '';
+    if (idInput) idInput.value = "";
     if (idDisplay) {
-      idDisplay.value = '';
+      idDisplay.value = "";
       idDisplay.readOnly = false;
-      idDisplay.style.cursor = 'text';
-      idDisplay.style.opacity = '1';
-      idDisplay.placeholder = 'Digite o ID numérico (ex: 6)';
+      idDisplay.style.cursor = "text";
+      idDisplay.style.opacity = "1";
+      idDisplay.placeholder = "Digite o ID numérico (ex: 6)";
       idDisplay.oninput = () => {
         if (idInput) idInput.value = idDisplay.value;
       };
@@ -918,8 +993,8 @@ function openEditDialog(distro = null) {
 }
 
 function openDeleteDialog(name) {
-  const dialog = document.getElementById('delete-dialog');
-  const nameSpan = document.getElementById('delete-target-distro-name');
+  const dialog = document.getElementById("delete-dialog");
+  const nameSpan = document.getElementById("delete-target-distro-name");
   if (!dialog) return;
 
   state.pendingDeleteName = name;
@@ -931,8 +1006,8 @@ function openDeleteDialog(name) {
 }
 
 function openSettingsDialog() {
-  const dialog = document.getElementById('settings-dialog');
-  const input = document.getElementById('settings-api-url-input');
+  const dialog = document.getElementById("settings-dialog");
+  const input = document.getElementById("settings-api-url-input");
   if (!dialog || !input) return;
 
   input.value = state.apiBaseUrl;
@@ -940,27 +1015,27 @@ function openSettingsDialog() {
 }
 
 async function testApiConnection() {
-  const input = document.getElementById('settings-api-url-input');
-  const feedback = document.getElementById('settings-connection-feedback');
+  const input = document.getElementById("settings-api-url-input");
+  const feedback = document.getElementById("settings-connection-feedback");
   if (!input || !feedback) return;
 
-  const testUrl = input.value.trim().replace(/\/+$/, '');
-  feedback.style.display = 'block';
-  feedback.className = 'font-mono';
-  feedback.style.color = 'var(--accent-primary)';
-  feedback.textContent = 'Testando comunicação com ' + testUrl + '...';
+  const testUrl = input.value.trim().replace(/\/+$/, "");
+  feedback.style.display = "block";
+  feedback.className = "font-mono";
+  feedback.style.color = "var(--accent-primary)";
+  feedback.textContent = "Testando comunicação com " + testUrl + "...";
 
   try {
     const res = await fetch(`${testUrl}/distro?name=__test_ping__`, {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' }
+      method: "GET",
+      headers: { Accept: "application/json" },
     });
 
     // 200, 404, or 500 means the server replied
-    feedback.style.color = 'var(--status-success)';
+    feedback.style.color = "var(--status-success)";
     feedback.textContent = `✔ Conectado com sucesso! Servidor respondeu com status HTTP ${res.status}.`;
   } catch (err) {
-    feedback.style.color = 'var(--status-error)';
+    feedback.style.color = "var(--status-error)";
     feedback.textContent = `✖ Falha na conexão: ${err.message}. Verifique a URL e o suporte a CORS.`;
   }
 }
@@ -970,17 +1045,22 @@ async function testApiConnection() {
    ========================================================================== */
 
 function setupLightDismissPolyfill() {
-  if (!('closedBy' in HTMLDialogElement.prototype)) {
+  if (!("closedBy" in HTMLDialogElement.prototype)) {
     const isOutside = (e, dialog) => {
       const r = dialog.getBoundingClientRect();
-      return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+      return (
+        e.clientX < r.left ||
+        e.clientX > r.right ||
+        e.clientY < r.top ||
+        e.clientY > r.bottom
+      );
     };
     for (const dialog of document.querySelectorAll('dialog[closedby="any"]')) {
       let pressedOutside = false;
-      dialog.addEventListener('pointerdown', (e) => {
+      dialog.addEventListener("pointerdown", (e) => {
         pressedOutside = isOutside(e, dialog);
       });
-      dialog.addEventListener('pointerup', (e) => {
+      dialog.addEventListener("pointerup", (e) => {
         if (pressedOutside && isOutside(e, dialog)) dialog.close();
       });
     }
@@ -989,15 +1069,15 @@ function setupLightDismissPolyfill() {
 
 function setupFormIndependentToggles() {
   // Register form toggle
-  const regCheckbox = document.getElementById('reg-is-independent');
-  const regBaseInput = document.getElementById('reg-base-input');
+  const regCheckbox = document.getElementById("reg-is-independent");
+  const regBaseInput = document.getElementById("reg-base-input");
   if (regCheckbox && regBaseInput) {
-    regCheckbox.addEventListener('change', () => {
+    regCheckbox.addEventListener("change", () => {
       if (regCheckbox.checked) {
-        regBaseInput.value = 'independent';
+        regBaseInput.value = "independent";
         regBaseInput.disabled = true;
       } else {
-        if (regBaseInput.value === 'independent') regBaseInput.value = '';
+        if (regBaseInput.value === "independent") regBaseInput.value = "";
         regBaseInput.disabled = false;
         regBaseInput.focus();
       }
@@ -1005,15 +1085,15 @@ function setupFormIndependentToggles() {
   }
 
   // Inline Register form toggle
-  const inlineCheckbox = document.getElementById('inline-is-independent');
-  const inlineBaseInput = document.getElementById('inline-base-input');
+  const inlineCheckbox = document.getElementById("inline-is-independent");
+  const inlineBaseInput = document.getElementById("inline-base-input");
   if (inlineCheckbox && inlineBaseInput) {
-    inlineCheckbox.addEventListener('change', () => {
+    inlineCheckbox.addEventListener("change", () => {
       if (inlineCheckbox.checked) {
-        inlineBaseInput.value = 'independent';
+        inlineBaseInput.value = "independent";
         inlineBaseInput.disabled = true;
       } else {
-        if (inlineBaseInput.value === 'independent') inlineBaseInput.value = '';
+        if (inlineBaseInput.value === "independent") inlineBaseInput.value = "";
         inlineBaseInput.disabled = false;
         inlineBaseInput.focus();
       }
@@ -1021,15 +1101,15 @@ function setupFormIndependentToggles() {
   }
 
   // Edit form toggle
-  const editCheckbox = document.getElementById('edit-is-independent');
-  const editBaseInput = document.getElementById('edit-base-input');
+  const editCheckbox = document.getElementById("edit-is-independent");
+  const editBaseInput = document.getElementById("edit-base-input");
   if (editCheckbox && editBaseInput) {
-    editCheckbox.addEventListener('change', () => {
+    editCheckbox.addEventListener("change", () => {
       if (editCheckbox.checked) {
-        editBaseInput.value = 'independent';
+        editBaseInput.value = "independent";
         editBaseInput.disabled = true;
       } else {
-        if (editBaseInput.value === 'independent') editBaseInput.value = '';
+        if (editBaseInput.value === "independent") editBaseInput.value = "";
         editBaseInput.disabled = false;
         editBaseInput.focus();
       }
@@ -1038,10 +1118,10 @@ function setupFormIndependentToggles() {
 }
 
 function setupSuggestionButtons() {
-  document.querySelectorAll('[data-fill-target]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const targetId = btn.getAttribute('data-fill-target');
-      const val = btn.getAttribute('data-fill-val');
+  document.querySelectorAll("[data-fill-target]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const targetId = btn.getAttribute("data-fill-target");
+      const val = btn.getAttribute("data-fill-val");
       const input = document.getElementById(targetId);
       if (input) {
         input.value = val;
@@ -1053,65 +1133,89 @@ function setupSuggestionButtons() {
 
 function initEventListeners() {
   // Theme switcher
-  document.getElementById('btn-theme-toggle')?.addEventListener('click', toggleTheme);
+  document
+    .getElementById("btn-theme-toggle")
+    ?.addEventListener("click", toggleTheme);
 
   // Search form
-  const searchForm = document.getElementById('search-form');
+  const searchForm = document.getElementById("search-form");
   if (searchForm) {
-    searchForm.addEventListener('submit', (e) => {
+    searchForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const input = document.getElementById('search-input');
+      const input = document.getElementById("search-input");
       if (input) performSearch(input.value);
     });
   }
 
   // Modal open buttons
-  document.getElementById('btn-open-register-modal')?.addEventListener('click', () => {
-    openRegisterDialog();
-  });
+  document
+    .getElementById("btn-open-register-modal")
+    ?.addEventListener("click", () => {
+      openRegisterDialog();
+    });
 
-  document.getElementById('btn-open-edit-direct')?.addEventListener('click', () => {
-    openEditDialog(null);
-  });
+  document
+    .getElementById("btn-open-edit-direct")
+    ?.addEventListener("click", () => {
+      openEditDialog(null);
+    });
 
-  document.getElementById('btn-open-settings')?.addEventListener('click', () => {
-    openSettingsDialog();
-  });
+  document
+    .getElementById("btn-open-settings")
+    ?.addEventListener("click", () => {
+      openSettingsDialog();
+    });
 
-  document.getElementById('btn-clear-cache')?.addEventListener('click', clearSessionCache);
+  document
+    .getElementById("btn-clear-cache")
+    ?.addEventListener("click", clearSessionCache);
 
   // Forms
-  document.getElementById('register-modal-form')?.addEventListener('submit', handleRegisterSubmit);
-  document.getElementById('register-inline-form')?.addEventListener('submit', handleRegisterSubmit);
-  document.getElementById('edit-modal-form')?.addEventListener('submit', handleEditSubmit);
+  document
+    .getElementById("register-modal-form")
+    ?.addEventListener("submit", handleRegisterSubmit);
+  document
+    .getElementById("register-inline-form")
+    ?.addEventListener("submit", handleRegisterSubmit);
+  document
+    .getElementById("edit-modal-form")
+    ?.addEventListener("submit", handleEditSubmit);
 
   // Delete confirmation
-  document.getElementById('btn-confirm-delete-action')?.addEventListener('click', handleConfirmDelete);
+  document
+    .getElementById("btn-confirm-delete-action")
+    ?.addEventListener("click", handleConfirmDelete);
 
   // Settings Save
-  document.getElementById('settings-form')?.addEventListener('submit', (e) => {
+  document.getElementById("settings-form")?.addEventListener("submit", (e) => {
     e.preventDefault();
-    const input = document.getElementById('settings-api-url-input');
+    const input = document.getElementById("settings-api-url-input");
     if (input) {
       setStoredApiBase(input.value);
-      showToast('success', 'Configuração salva', `Endpoint da API atualizado para: ${state.apiBaseUrl}`);
-      document.getElementById('settings-dialog')?.close();
+      showToast(
+        "success",
+        "Configuração salva",
+        `Endpoint da API atualizado para: ${state.apiBaseUrl}`,
+      );
+      document.getElementById("settings-dialog")?.close();
     }
   });
 
   // Settings Test Button
-  document.getElementById('btn-test-connection')?.addEventListener('click', testApiConnection);
+  document
+    .getElementById("btn-test-connection")
+    ?.addEventListener("click", testApiConnection);
 
   // Modal close buttons
-  document.querySelectorAll('.btn-close-dialog').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const dialog = btn.closest('dialog');
+  document.querySelectorAll(".btn-close-dialog").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const dialog = btn.closest("dialog");
       if (dialog) dialog.close();
     });
   });
 
   // Sync across tabs
-  window.addEventListener('storage', (e) => {
+  window.addEventListener("storage", (e) => {
     if (e.key === CONFIG.STORAGE_THEME_KEY && e.newValue) {
       applyTheme(e.newValue);
     }
@@ -1123,7 +1227,7 @@ function initEventListeners() {
 }
 
 // Bootstrap application on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   applyTheme(state.theme);
   updateApiStatusUi();
   renderPopularShortcuts();
